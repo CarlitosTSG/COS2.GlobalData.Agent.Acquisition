@@ -207,6 +207,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                     else
                     {
                         contadorFtp = 0;
+                        logger.Info("Descarga realizada, contador de error ftp reiniciado");
                         lastDownload = cSet;
 
                         if (agentState != GlobalAgentState.Normal)
@@ -568,6 +569,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                 catch (Exception ex)
                 {
                     logger.Warn("FluentFtp : Could not verify DataSet : " + sdate + " " + shour);
+                    logger.Warn($"FluentFtp : intento numero: {contadorFtp} fallo al descargar por ftp");
                     fluentFtpFlagDownloadError = true;//aqui es porque no puede descargar ftp
                     contadorFtp++;
                 }
