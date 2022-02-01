@@ -43,6 +43,7 @@ namespace GlobalData.Agent.Acquisition.Providers
         double fluentFtpMaxSpeed;
         long fluentFtpTotalSize;
         List<string> fluentFtpFiles;
+        int contadorFtp = 0;
 
         public GFSHiResProvider() : base()
         {
@@ -147,8 +148,10 @@ namespace GlobalData.Agent.Acquisition.Providers
                     var cSet = respuestaDescargaFTP.Item1;//almaceno el valor de la descarga, ya sea null o el objeto
                     try
                     {
-                        if (cSet != null && respuestaDescargaFTP.Item2 == true)//si es que tengo la respuesta null
+                        if (cSet != null && ( respuestaDescargaFTP.Item2 == true || contadorFtp < 3 ))
+                            //si es que tengo la respuesta null
                             //y tuve un error en la descarga. intentare descargar por https
+                            //o si es que consulto mas de 3 veces por el servidor ftp 
                             cSet = DownloadDataset(cRequestDate);
                     }
                     catch(Exception ex)
@@ -203,6 +206,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                     }
                     else
                     {
+                        contadorFtp = 0;
                         lastDownload = cSet;
 
                         if (agentState != GlobalAgentState.Normal)
@@ -526,7 +530,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                     // /pub/data/nccf/com/gfs/prod/gfs.[DATE]/[HOUR]/atmos/
                     // gfs.t06z.pgrb2.0p25.f082                    
 
-                    if (client.DirectoryExists(spath))
+                    if (client.DirectoryExists(spath))//aqui sabre si hay archivos o carpetas relacionadas a ese timestap
                     {
                         // Check to see if the first and last file exist
                         client.DataConnectionType = FtpDataConnectionType.AutoPassive;
@@ -564,7 +568,8 @@ namespace GlobalData.Agent.Acquisition.Providers
                 catch (Exception ex)
                 {
                     logger.Warn("FluentFtp : Could not verify DataSet : " + sdate + " " + shour);
-                    fluentFtpFlagDownloadError = true;
+                    fluentFtpFlagDownloadError = true;//aqui es porque no puede descargar ftp
+                    contadorFtp++;
                 }
 
                 if (client.IsConnected)
