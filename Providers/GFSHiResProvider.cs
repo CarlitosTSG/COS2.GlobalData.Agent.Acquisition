@@ -851,7 +851,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                         {
                             logger.Info("Dataset : " + cDate.ToString("yyyy-MM-dd HH") + " : Could not be Downloaded");
 
-                            DownloadDatasetError_SendEmail(downloadSet);
+                            DownloadDatasetError_SendEmail();
 
                             logger.Info("Dataset : " + cDate.ToString("yyyy-MM-dd HH") + " : Download errors, will retry shortly");
                             logger.Info("Dataset : " + cDate.ToString("yyyy-MM-dd HH") + " : Removing partial download record");
