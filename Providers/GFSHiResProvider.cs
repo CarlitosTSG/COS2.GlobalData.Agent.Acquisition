@@ -157,7 +157,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                     catch(Exception ex)
                     {
                         cSet = null;
-                        logger.Error(ex, "Error al intentar Hacer la descarga por FTP y HTTPS.");
+                        logger.Error(ex, "Error downloading using FTP and HTTPS.");
                     }
                     
                     if (cSet == null)
@@ -206,8 +206,12 @@ namespace GlobalData.Agent.Acquisition.Providers
                     }
                     else
                     {
-                        contadorFtp = 0;
-                        logger.Info("Descarga realizada, contador de error ftp reiniciado");
+                        if(contadorFtp != 0)
+                        {
+                            contadorFtp = 0;
+                            logger.Info("Download complete, FTP counter reset");
+                        }
+                        
                         lastDownload = cSet;
 
                         if (agentState != GlobalAgentState.Normal)
@@ -377,7 +381,7 @@ namespace GlobalData.Agent.Acquisition.Providers
         public (GlobalDataDownload, bool) DownloadDatasetFTP(DateTime cDate)
         {
             //informaremos un intento de descarga a traves de ftp.
-            logger.Info("----Comenzando intento de descarga a traves de FTP.---");
+            logger.Info("----Begin downloar using FTP.---");
             // cDate is a UTC Date containing the download requested.
             // This routine does all that's needed to download a set.  If the set doesn't exist yet, it returns null.
             // If the set is partially there, this routine does it's own waiting and only exits once the download is complete
@@ -569,7 +573,7 @@ namespace GlobalData.Agent.Acquisition.Providers
                 catch (Exception ex)
                 {
                     logger.Warn("FluentFtp : Could not verify DataSet : " + sdate + " " + shour);
-                    logger.Warn($"FluentFtp : intento numero: {contadorFtp} fallo al descargar por ftp");
+                    logger.Warn($"FluentFtp : try number: {contadorFtp}, fail to download using ftp");
                     fluentFtpFlagDownloadError = true;//aqui es porque no puede descargar ftp
                     contadorFtp++;
                 }
@@ -691,7 +695,7 @@ namespace GlobalData.Agent.Acquisition.Providers
         public override GlobalDataDownload DownloadDataset(DateTime cDate)
         {
             //avisaremos a la consola que estamos comenzando un intento de descarga por https
-            logger.Info("---Comenzando intento de descarga a traves de metodo https.---");
+            logger.Info("---Begin download using https.---");
             // cDate is a UTC Date containing the download requested.
             // This routine does all that's needed to download a set.  If the set doesn't exist yet, it returns null.
             // If the set is partially there, this routine does it's own waiting and only exits once the download is complete
